@@ -59,4 +59,4 @@ def tokenization(tempArticle):
     #print(len(totalLemmaArticleCount))
     return tempTokenizedArticle,totalLemmaArticleCount,signigicantWordCount
 
-#print(tokenization(tempArticle)[1])
+#print(tokenization(tempArticle))

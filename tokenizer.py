@@ -1,6 +1,6 @@
 import nltk
 import mysql.connector
-from tokenPreprocessing import *
+from tokenization import *
 import json
 
 #necessary nltk packages
@@ -33,22 +33,21 @@ for x in myresult:
     if result is not None:
       pass
     else:
-      tokens = nltk.word_tokenize(tempArticle)
-      tempTokenizedArticleList = nltk.pos_tag(tokens)
-      preprocessedFunctionReturn = tokenizedPreprocessor(tempTokenizedArticleList)
+      preprocessedFunctionReturn = tokenization(tempArticle)
       tempTokenizedArticle = preprocessedFunctionReturn[0]
       totalLemmaArticleCount = preprocessedFunctionReturn[1]
+      significantWordCount = preprocessedFunctionReturn[2]
       #tempTokenizedArticle = ' '.join([str(elem) for elem in preprocessedTokenizedArticleList]) 
       #tempLemmaCount = ' '.join([str(elem) for elem in totalLemmaArticleCount]) 
-      sql = "INSERT INTO tokenizedNews (url,title,tokenizedArticle,lemmaCount) values (%s, %s, %s, %s)"
-      val = (tempurl, tempTitle, json.dumps(tempTokenizedArticle), json.dumps(totalLemmaArticleCount))
+      sql = "INSERT INTO tokenizedNews (url,title,tokenizedArticle,lemmaCount,wordCount) values (%s, %s, %s, %s, %s)"
+      val = (tempurl, tempTitle, json.dumps(tempTokenizedArticle), json.dumps(totalLemmaArticleCount),significantWordCount)
       cursor.execute(sql,val)
       mydb.commit()
       newArticlesTokenized = newArticlesTokenized+1
 #print(tempTokenizedArticleList)
-#print(type(tempTokenizedArticleList))
-#print(totalLemmaArticleCount)
-#print(type(tempTokenizedArticle))
+print('signwc',significantWordCount)
+print('tlac',totalLemmaArticleCount)
+print('tta',tempTokenizedArticle)
 if newArticlesTokenized > 1:
   print(newArticlesTokenized,'articles tokenized')
 elif newArticlesTokenized == 1:

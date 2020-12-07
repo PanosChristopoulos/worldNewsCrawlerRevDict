@@ -25,7 +25,7 @@ mydb = mysql.connector.connect(
 )
 
 cursor = mydb.cursor()
-cursor.execute('DROP TABLE tokenizedNews')
+#cursor.execute('DROP TABLE tokenizedNews')
 cursor.execute("CREATE TABLE IF NOT EXISTS news (id INT AUTO_INCREMENT PRIMARY KEY, url VARCHAR(255), title TEXT, article TEXT, added TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
 
 
@@ -35,7 +35,7 @@ print('news Table:')
 for x in cursor:
   print(x)
 
-cursor.execute("CREATE TABLE IF NOT EXISTS tokenizedNews (id INT AUTO_INCREMENT PRIMARY KEY, url VARCHAR(255), title TEXT, tokenizedArticle TEXT, lemmaCount TEXT, added TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
+cursor.execute("CREATE TABLE IF NOT EXISTS tokenizedNews (id INT AUTO_INCREMENT PRIMARY KEY, url VARCHAR(255), title TEXT, tokenizedArticle TEXT, lemmaCount TEXT, wordCount INT, articleInDict BIT DEFAULT 0, added TIMESTAMP DEFAULT CURRENT_TIMESTAMP)")
 
 
 cursor.execute("DESCRIBE tokenizedNews")

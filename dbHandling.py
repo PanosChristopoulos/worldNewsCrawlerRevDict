@@ -1,4 +1,5 @@
 import mysql.connector
+import json
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -28,5 +29,10 @@ print(len(myresult),'articles in database')
 
 mycursor.execute("SELECT article FROM news")
 myresult = mycursor.fetchall()
-print(myresult[2])
+print(myresult[243])
 
+mycursor.execute("SELECT * FROM tokenizedNews")
+myresult = mycursor.fetchall()
+print(len(myresult))
+y = json.loads(myresult[100][4])
+print(type(y))

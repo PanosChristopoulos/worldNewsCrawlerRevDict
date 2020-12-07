@@ -22,6 +22,9 @@ def articleTF(article):
 cursor.execute("SELECT article FROM news")
 myresult = cursor.fetchall()
 print(myresult[0][0])
+
+
+"""
 def computeIDF(articles):
     import math
     N = len(articles)
@@ -35,3 +38,4 @@ def computeIDF(articles):
     return idfDict
 
 print(computeIDF(myresult))
+"""

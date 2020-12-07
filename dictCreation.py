@@ -16,6 +16,11 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 
+def dictToJson(dict):
+    with open("sample.json", "w") as outfile:  
+        json.dump(dict, outfile) 
+        
+
 def totalWordCount():
     wordCount = 0
     mycursor.execute("SELECT wordCount FROM tokenizedNews")
@@ -39,7 +44,7 @@ def uniqueLemmas():
                     globalLemmaList.append(tempLemma)
         except:
             pass
-    print('There are',len(globalLemmaList),'unique lemmas')
+    #print('There are',len(globalLemmaList),'unique lemmas')
     return globalLemmaList
 
 """
@@ -76,10 +81,55 @@ def computeTF(articleID):
         tfDictionary[x[0]] = format(tempNum, '.6f')
     return tfDictionary
 
+uniqueWords = uniqueLemmas()
+wordsDict = dict.fromkeys(uniqueWords, 0)
+
 
 def computeIDF():
+    idfDict = {}
     mycursor.execute("SELECT article FROM news")
-    myresult = mycursor.fetchall()
+    result = mycursor.fetchall()
+    documents = []
+    for x in result:
+        documents.append(x[0])
+    n = len(documents)
+    print('Computing IDF for',n,'Documents.')
+    for x in documents:
+        tempBagofWords=x.split(' ')
+        for word in tempBagofWords:
+            try:
+                wordsDict[word] +=1
+            except:
+                pass
+    erCount = 0
+    wordsToRemove = []
+    for word, val in wordsDict.items():
+        try:
+            numToDict = math.log(n/float(val))
+            wordsDict[word] = format(numToDict, '.5f')
+        except:
+            wordsToRemove.append(word)
+    for word in wordsToRemove:
+        del wordsDict[word]
+    print(len(wordsDict),'unique lemmas added')
+    return wordsDict
 
 
-computeTF(250)
+
+idf = computeIDF()
+
+
+
+
+
+"""
+    print(len(documents))
+    print(type(documents[0]))
+    article = documents[0][0]
+    print(len(article))
+    print(type(article))
+    #for article in documents:
+    wordCollection = article.split(' ')
+    print(wordCollection)
+    #uniqueWords = set()
+    """

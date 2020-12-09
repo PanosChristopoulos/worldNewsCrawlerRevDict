@@ -4,6 +4,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import pandas as pd
 import openpyxl
 import math
+import pickle
 
 mydb = mysql.connector.connect(
   host="localhost",
@@ -16,10 +17,14 @@ mydb = mysql.connector.connect(
 mycursor = mydb.cursor()
 
 
+def dictToPickle(name,mydict):
+    with open('dictLists/{}.pkl'.format(name),'wb') as f:
+        pickle.dump(mydict, f, protocol=pickle.HIGHEST_PROTOCOL)
+
 def dictToJson(dict):
     with open("sample.json", "w") as outfile:  
         json.dump(dict, outfile) 
-        
+
 
 def totalWordCount():
     wordCount = 0
@@ -47,27 +52,6 @@ def uniqueLemmas():
     #print('There are',len(globalLemmaList),'unique lemmas')
     return globalLemmaList
 
-"""
-uniqueLemmas()
-vectorizer = TfidfVectorizer()
-mycursor.execute("SELECT id,article FROM news")
-myresult = mycursor.fetchall()
-articleList = []
-articleId = []
-for x in myresult:
-    articleList.append(x[1])
-    articleId.append(x[0])
-
-
-vectors = vectorizer.fit_transform(articleList)
-feature_names = vectorizer.get_feature_names()
-dense = vectors.todense()
-denselist = dense.tolist()
-df = pd.DataFrame(denselist, columns=feature_names)
-df.index = articleId
-df.to_excel('output.xlsx',sheet_name = 'eris')
-
-"""
 
 
 def computeTF(articleID):
@@ -118,10 +102,37 @@ def computeIDF():
 
 idf = computeIDF()
 
+def computeTFIDF(articleID,idfs):
+    tfidf = {}
+    tfBagOfWords = computeTF(articleID)
+    #print(tfBagOfWords)
+    for word,val in tfBagOfWords.items():
+        try:
+            tempNum = float(val)*float(idfs[word])*10
+            tfidf[word] = format(tempNum, '.5f')
+        except:
+            pass
+    #print(word,val)
+    #print(idfs[word])
+    return tfidf
 
+#print(computeTFIDF(185,idf))
+#a = computeTFIDF(185,idf)
+#dictToPickle('a',a)
+#b = computeTFIDF(12,idf)
+#df = pd.DataFrame([a,b])
+#print(df)
+#df.to_pickle('eris.pkl')
 
-
-
+#df = pd.read_pickle('eris.pkl')
+#print(df)
+"""
+print(a)
+dictionaryDataframe = pd.DataFrame()
+print(dictionaryDataframe)
+dictionaryDataframe.append(a, ignore_index = True)
+print(dictionaryDataframe)
+"""
 """
     print(len(documents))
     print(type(documents[0]))
@@ -133,3 +144,17 @@ idf = computeIDF()
     print(wordCollection)
     #uniqueWords = set()
     """
+
+mycursor.execute("SELECT id,articleInDict from tokenizedNews")
+result = mycursor.fetchall()
+
+articlesToDictCounter = 0
+for x in result:
+    if x[1] == 0:
+       tempList = computeTFIDF(x[0],idf)
+       dictToPickle('{}'.format(x[0]),tempList)
+       mycursor.execute("UPDATE tokenizedNews SET articleInDict = 1 WHERE id = {};".format(x[0]))
+       mydb.commit()
+       articlesToDictCounter += 1
+
+print(articlesToDictCounter,'articles added to Dictionary')

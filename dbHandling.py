@@ -27,12 +27,12 @@ myresult = mycursor.fetchall()
 
 print(len(myresult),'articles in database')
 
-mycursor.execute("SELECT article FROM news")
+mycursor.execute("SELECT id,title FROM news")
 myresult = mycursor.fetchall()
-print(myresult[243])
+print(myresult)
 
 mycursor.execute("SELECT * FROM tokenizedNews")
 myresult = mycursor.fetchall()
-print(len(myresult))
+#print(len(myresult))
 y = json.loads(myresult[100][4])
-print(type(y))
+#print(type(y))

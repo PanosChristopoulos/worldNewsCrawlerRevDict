@@ -44,10 +44,7 @@ for x in myresult:
       cursor.execute(sql,val)
       mydb.commit()
       newArticlesTokenized = newArticlesTokenized+1
-#print(tempTokenizedArticleList)
-print('signwc',significantWordCount)
-print('tlac',totalLemmaArticleCount)
-print('tta',tempTokenizedArticle)
+
 if newArticlesTokenized > 1:
   print(newArticlesTokenized,'articles tokenized')
 elif newArticlesTokenized == 1:

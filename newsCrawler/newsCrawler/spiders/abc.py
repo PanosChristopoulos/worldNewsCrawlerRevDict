@@ -23,10 +23,7 @@ class abcWorldSpider(scrapy.Spider):
     def parse(self,response):
         global newsCounter
         tempXpath = '//h2/a/@href'
-        #print(tempXpath)
         currentNewList = response.xpath(tempXpath).extract()
-        #print(currentNewList)
-        #print('len',len(currentNewList))
         for x in currentNewList:
           sql = "Select url FROM news WHERE url = '{}'".format(x,)
           c.execute(sql)
@@ -34,7 +31,6 @@ class abcWorldSpider(scrapy.Spider):
           if result is not None:
             pass
           else:
-            #newsCounter = newsCounter+1
             yield scrapy.Request(url = x, callback = self.parseArticle)
 
 

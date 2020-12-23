@@ -1,7 +1,38 @@
 import nltk
 import mysql.connector
-from tokenization import *
 import json
+from collections import Counter
+
+closedClassTags = ['CD', 'CC', 'DT', 'EX', 'IN', 'LS', "''", ',', '.', '``', 'MD', 'PDT', 'POS', 'PRP', 'PRP$', 'RP', 'TO', 'UH', 'WDT', 'WP', 'WP$', 'WRB']
+
+def listToString(test_list):  
+    res = str(test_list).strip('[]')
+    return res
+
+
+def tokenizedPreprocessor(NTLKList):
+    tempFinalList = []
+    wordsList = []
+    for x in NTLKList:
+        if x[1] in closedClassTags:
+            pass
+        else:
+            tempFinalList.append(x)
+    for x in tempFinalList:
+        wordsList.append(x[0])
+    counts = Counter(wordsList)
+    your_list = [list(i) for i in counts.items()]
+
+    return [tempFinalList,your_list]
+
+def tokenization(tempArticle):
+    tokens = nltk.word_tokenize(tempArticle)
+    tempTokenizedArticleList = nltk.pos_tag(tokens)
+    preprocessedFunctionReturn = tokenizedPreprocessor(tempTokenizedArticleList)
+    tempTokenizedArticle = preprocessedFunctionReturn[0]
+    totalLemmaArticleCount = preprocessedFunctionReturn[1]
+    signigicantWordCount = len(tempTokenizedArticleList)
+    return tempTokenizedArticle,totalLemmaArticleCount,signigicantWordCount
 
 #necessary nltk packages
 """ 

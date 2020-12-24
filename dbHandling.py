@@ -16,6 +16,8 @@ cursor.execute(sql, val)
 
 mydb.commit()
 """
+
+
 mycursor = mydb.cursor()
 
 mycursor.execute("SELECT title FROM news ")
